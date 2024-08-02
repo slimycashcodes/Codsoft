@@ -22,11 +22,11 @@ print('       3.See the list of completed and remaining to-do list')
 
 #while Loop
 run = 'y'
-while run=='y':
+while run != 'n':
      #menu-driven functions
-     t('Enter the required choice:')
+     t('Enter the required choice(1-add new / 2-change details / 3-see list):')
      ch=int(input())
-     if ch not in [1,2,3,4]:
+     if ch not in [1,2,3]:
           break
      
      if ch == 1:
@@ -40,24 +40,8 @@ while run=='y':
           task_det = [task_name , task_time , task_duedate , task_status]
           wr.writerow(task_det)
           fp.flush()
-
-     elif ch == 3:
-          data = []
-          with open('todolog.csv','r',newline='\n') as dd:
-               rd=csv.reader(dd)
-               for i in rd:
-                    data.append(i)
-          t('Here is the pre-existing tasks in your T.D.L..')
-          for i in data:
-               t('Completed Tasks:')
-               if i[-1]=='completed':
-                    print(i)
-               t('Pending tasks :')
-               if i[-1]=='pending':
-                    print(i)
-               
           
-     elif ch == 4:
+     elif ch == 2:
           t('Here is the list of existing tasks in ur T.D.L ..')
           fp.seek(0)
           rd = csv.reader(fp)
@@ -67,21 +51,51 @@ while run=='y':
                csv_data.append(i)
           t('Enter the name of task to be updated ..')
           ch_task = input()
+          fl=False
           for i in csv_data :
                if i[0] == ch_task :
-                    t('Pre-existing record is ...'+ str(i) )
+                    fl=True
+                    t('Pre-existing record is ...'+ str(i[0]) + str(i[2]) )
                     t('Enter the new data below ...:')
                     name = input('New Name :')
-                    time = time.ctime()
+                    times = time.ctime()
                     due = input('New Due Date :')
                     sta = input('New Status :')
-                    new_data=[name,time,due,sta]
+                    new_data=[name,times,due,sta]
                     csv_data[csv_data.index(i)]=new_data
+              
+               
           with open('todolog.csv','w+',newline='\n') as file:
                wr = csv.writer(file)
                wr.writerows(csv_data)
 
-          run = input('Do u want to continue (y/n)')
+           
+          
+
+     elif ch == 3:
+          data = []
+          with open('todolog.csv','r',newline='\n') as dd:
+               rd=csv.reader(dd)
+               for i in rd:
+                    data.append(i)
+          t('Here is the pre-existing tasks in your T.D.L..')
+          data_com=[]
+          data_pen=[]
+          for i in data:
+               if i[3] == 'completed':
+                    data_com.append(i)
+               else:
+                    data_pen.append(i)
+          t('Completed tasks...')
+          for i in data_com:
+               t(i[0]+'   '+i[2])
+          t('pending tasks....')
+          for i in data_pen:
+               t(i[0]+'   '+i[2])
+               
+               
+     run=input('Do u want to continue (y/n):')    
+     
 
 fp.close()
           
